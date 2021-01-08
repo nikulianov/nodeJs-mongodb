@@ -1,0 +1,35 @@
+<h1>Курсы</h1>
+
+{{#if courses.length}}
+  <div class="row">
+    {{#each courses}}
+      <div class="col s6 offset-s3">
+        <div class="card">
+          <div class="card-image">
+            <img src="{{url}}" alt="{{title}}">
+          </div>
+          <div class="card-content">
+            <span class="card-title">{{title}}</span>
+            <p class="price">{{price}}</p>
+          </div>
+          <div class="card-action addGood">
+            <a href="/courses/{{id}}" target="_blank">Посмотреть курс</a>
+              {{#if @root.isAuth}}
+                  {{#ifeq userId._id @root.userId}}
+                  <a href="/courses/{{id}}/edit?allow=true">Редактировать</a>
+                  {{/ifeq}}
+                  <form action="/card/add" method="POST">
+                      <input type="hidden" name="_csrf" value="{{@root.csrf}}">
+                      <input type="hidden" name="id" value="{{id}}">
+                      <button class="btn btn-primary">Купить</button>
+                  </form>
+              {{/if}}
+          </div>
+        </div>
+      </div>
+
+    {{/each}}
+  </div>
+{{else}}
+  <p>Курсов пока нет</p>
+{{/if}}
