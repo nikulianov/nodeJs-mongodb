@@ -33,7 +33,7 @@
                 <p class="alert">{{{registerError}}}</p>
             {{/if}}
             <h1>Регистрация</h1>
-            <form action="/auth/register" method="POST">
+            <form action="/auth/register" method="POST" novalidate>
                 <input type="hidden" name="_csrf" value="{{csrf}}">
                 <div class="input-field">
                     <input id="remail" name="email" type="text" class="validate" required>
@@ -58,7 +58,7 @@
                     <label for="confirm">Пароль еще раз</label>
                     <span class="helper-text" data-error="Введите пароль"></span>
                 </div>
-                <button class="btn btn-primary" type="submit">Войти</button>
+                <button class="btn btn-primary" type="submit">Создать аккаунт</button>
             </form>
 
         </div>

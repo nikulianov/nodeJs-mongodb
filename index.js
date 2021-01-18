@@ -10,6 +10,8 @@ const session = require('express-session')
 const MongoStore = require('connect-mongodb-session')(session)
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
+const errorHandler = require('./middleware/error')
+const fileMiddleware = require('./middleware/file')
 const csrf = require('csurf')
 
 const HomeRouters = require('./routes/home')
@@ -18,6 +20,7 @@ const CoursesRouters = require('./routes/courses')
 const CardRouters = require('./routes/card')
 const OrdersRouters = require('./routes/orders')
 const AuthRouters = require('./routes/auth')
+const ProfileRouters = require('./routes/profile')
 const keys = require('./keys')
 const PORT = process.env.PORT || 3000
 
@@ -36,6 +39,7 @@ const store = new MongoStore({
 })
 
 app.use(express.static(path.join(__dirname,'public')))
+app.use('/images',express.static(path.join(__dirname,'images')))
 app.use(express.urlencoded({extended:true}))
 app.use(session({
   secret:keys.SESSION_SECRET,
@@ -43,6 +47,7 @@ app.use(session({
   saveUninitialized:false,
   store
 }))
+app.use(fileMiddleware.single('avatar'))
 app.use(csrf())
 app.use(flash())
 app.use(varMiddleware)
@@ -54,6 +59,8 @@ app.use('/courses',CoursesRouters)
 app.use('/card',CardRouters)
 app.use('/orders',OrdersRouters)
 app.use('/auth',AuthRouters)
+app.use('/profile',ProfileRouters)
+app.use(errorHandler)
 
 async function start(){
   try {

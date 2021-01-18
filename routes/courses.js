@@ -1,5 +1,7 @@
 const { Router } = require('express')
 const router = Router()
+const { validationResult } = require('express-validator')
+const { courseValidators } = require('../utils/validate')
 const Course = require('../models/course')
 const auth = require('../middleware/auth')
 
@@ -15,7 +17,7 @@ router.get('/', async (req, res) => {
   res.render('courses', {
     title: 'Курсы',
     isCourses: true,
-    userId: req.user._id ? req.user._id.toString() : null,
+    userId: req.user?._id ? req.user._id.toString() : null,
     courses
   })
 })
@@ -59,9 +61,14 @@ router.get('/:id/edit', auth, async (req, res) => {
 
 })
 
-router.post('/edit', auth, async (req, res) => {
+router.post('/edit', auth, courseValidators, async (req, res) => {
+  const { id } = req.body
+  let error = validationResult(req)
+  if(!error.isEmpty()){
+    return res.redirect(`/courses/${id}/edit?allow=true`)
+  }
+
   try {
-    const { id } = req.body
     delete req.body.id
     const course = await Course.findById(id)
     if(isOwner(course,req)){
